@@ -43,55 +43,70 @@ Deno.serve(async (req) => {
       throw new Error("Missing required fields: to, subject, or order_data");
     }
     
-    console.log(`Preparing to send email to: ${to}`);
+    console.log(`Preparing to send confirmation email to client: ${to}`);
     
-    // Create email HTML content
+    // Get the current date and time
+    const now = new Date();
+    // Calculate 24 hours from now for pickup expiration
+    const pickupExpiration = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const formattedExpiration = pickupExpiration.toLocaleString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    // Create email HTML content for client confirmation
     const htmlContent = `
     <html>
       <head>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; }
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
           h1 { color: #333366; }
-          .order-details { background-color: #f8f8f8; padding: 15px; border-radius: 5px; }
+          .notice { background-color: #e8f4fd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          .important { color: #c0392b; font-weight: bold; }
+          .order-details { background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 15px 0; }
           .detail-row { margin-bottom: 10px; }
           .label { font-weight: bold; }
+          .footer { margin-top: 30px; font-size: 0.9em; color: #777; }
         </style>
       </head>
       <body>
         <div class="container">
-          <h1>New Currency Exchange Order: ${order_data.order_id}</h1>
-          <p>A new currency exchange order has been received with the following details:</p>
+          <h1>Votre commande est confirmée !</h1>
+          <p>Bonjour ${order_data.first_name} ${order_data.last_name},</p>
+          <p>Nous avons le plaisir de vous informer que votre commande de change de devises a été confirmée.</p>
+          
+          <div class="notice">
+            <p><span class="important">IMPORTANT :</span> Votre commande est disponible pour récupération dès maintenant et jusqu'à <strong>${formattedExpiration}</strong> (24 heures).</p>
+            <p>Passé ce délai, votre commande devra être réservée à nouveau.</p>
+          </div>
+          
+          <h2>Détails de votre commande :</h2>
           <div class="order-details">
             <div class="detail-row">
-              <span class="label">Numero de commande:</span> ${order_data.order_id}
+              <span class="label">Numéro de commande :</span> ${order_data.order_id}
             </div>
             <div class="detail-row">
-              <span class="label">Nom, Prenom:</span> ${order_data.first_name} ${order_data.last_name}
+              <span class="label">Type d'opération :</span> ${order_data.operation_type}
             </div>
             <div class="detail-row">
-              <span class="label">Email:</span> ${order_data.email}
+              <span class="label">Devise d'échange :</span> ${order_data.from_amount} ${order_data.from_currency} ➔ ${order_data.to_amount} ${order_data.to_currency}
             </div>
             <div class="detail-row">
-              <span class="label">Numero de telephone:</span> ${order_data.phone}
-            </div>
-            <div class="detail-row">
-              <span class="label">Type d'operation:</span> ${order_data.operation_type}
-            </div>
-            <div class="detail-row">
-              <span class="label">Exchange:</span> ${order_data.from_amount} ${order_data.from_currency} ➔ ${order_data.to_amount} ${order_data.to_currency}
-            </div>
-            // <div class="detail-row">
-            //   <span class="label">Delivery Method:</span> ${order_data.delivery_method}
-            // </div>
-              <div class="detail-row">
-              <span class="label">Remarques:</span> ${order_data.remarques}
-            </div>
-            <div class="detail-row">
-              <span class="label">TAUX:</span> ${order_data.taux}
+              <span class="label">Taux appliqué :</span> ${order_data.taux}
             </div>
           </div>
-          <p>Please process this order promptly.</p>
+          
+          <p>Si vous avez des questions concernant votre commande, n'hésitez pas à nous contacter.</p>
+          
+          <p>Nous vous remercions pour votre confiance.</p>
+          
+          <div class="footer">
+            <p>Ceci est un message automatique, merci de ne pas y répondre directement.</p>
+          </div>
         </div>
       </body>
     </html>
@@ -115,19 +130,19 @@ Deno.serve(async (req) => {
       from: FROM_EMAIL,
       to: to,
       subject: subject,
-      content: "Please view this email with an HTML-compatible client.",
+      content: "Veuillez consulter cet email avec un client compatible HTML.",
       html: htmlContent,
     });
     
     // Close the client connection
     await client.close();
     
-    console.log("Email sent successfully");
+    console.log("Confirmation email sent successfully to client");
     
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Email notification sent successfully",
+        message: "Order confirmation email sent successfully to client",
       }),
       {
         headers: { "Content-Type": "application/json" },
@@ -135,7 +150,7 @@ Deno.serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error("Failed to send email:", error);
+    console.error("Failed to send confirmation email:", error);
     
     return new Response(
       JSON.stringify({

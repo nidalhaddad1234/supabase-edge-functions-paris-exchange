@@ -64,31 +64,28 @@ Deno.serve(async (req) => {
           <p>A new currency exchange order has been received with the following details:</p>
           <div class="order-details">
             <div class="detail-row">
-              <span class="label">Numero de commande:</span> ${order_data.order_id}
+              <span class="label">Order ID:</span> ${order_data.order_id}
             </div>
             <div class="detail-row">
-              <span class="label">Nom, Prenom:</span> ${order_data.first_name} ${order_data.last_name}
+              <span class="label">Customer:</span> ${order_data.first_name} ${order_data.last_name}
             </div>
             <div class="detail-row">
               <span class="label">Email:</span> ${order_data.email}
             </div>
             <div class="detail-row">
-              <span class="label">Numero de telephone:</span> ${order_data.phone}
+              <span class="label">Phone:</span> ${order_data.phone}
             </div>
             <div class="detail-row">
-              <span class="label">Type d'operation:</span> ${order_data.operation_type}
+              <span class="label">Operation:</span> ${order_data.operation_type}
             </div>
             <div class="detail-row">
               <span class="label">Exchange:</span> ${order_data.from_amount} ${order_data.from_currency} ➔ ${order_data.to_amount} ${order_data.to_currency}
             </div>
-            // <div class="detail-row">
-            //   <span class="label">Delivery Method:</span> ${order_data.delivery_method}
-            // </div>
-              <div class="detail-row">
-              <span class="label">Remarques:</span> ${order_data.remarques}
+            <div class="detail-row">
+              <span class="label">Delivery Method:</span> ${order_data.delivery_method}
             </div>
             <div class="detail-row">
-              <span class="label">TAUX:</span> ${order_data.taux}
+              <span class="label">Remarques:</span> ${order_data.Remarques}
             </div>
           </div>
           <p>Please process this order promptly.</p>
