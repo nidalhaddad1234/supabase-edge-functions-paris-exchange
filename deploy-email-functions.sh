@@ -31,10 +31,10 @@ echo "Using WEBSITE_URL: $WEBSITE_URL"
 # Set secrets
 supabase secrets set WEBSITE_URL="$WEBSITE_URL"
 
-# Deploy functions
+# Deploy functions with CORS enabled
 echo "Deploying email functions..."
-supabase functions deploy handle-order-confirmed-email
-supabase functions deploy send-email-notification
+supabase functions deploy handle-order-confirmed-email --no-verify-jwt
+supabase functions deploy send-email-notification --no-verify-jwt
 
 echo "====================================================="
 echo "Deployment complete! Functions are ready to use."
