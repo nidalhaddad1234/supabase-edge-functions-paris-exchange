@@ -261,7 +261,6 @@ h1 {
 <p>Veuillez traiter cette commande dans les plus brefs délais.</p>
 <div class="action-links">
 <a href="${adminUrl}" class="action-link">Confirmer la commande</a>
-<a href="${adminUrl}" class="action-link secondary">Voir les détails</a>
 </div>
 <div class="footer">
 <p>Ce message a été généré automatiquement par le système Paris Exchange.</p>
