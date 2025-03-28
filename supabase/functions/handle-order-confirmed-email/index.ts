@@ -86,6 +86,9 @@ Deno.serve(async (req) => {
       subject: subject,
       content: "Veuillez consulter cet email avec un client compatible HTML.",
       html: htmlContent,
+      headers: {
+        "Content-Type": "text/html; charset=UTF-8"
+      }
     });
     
     // Close the client connection

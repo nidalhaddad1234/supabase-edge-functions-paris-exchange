@@ -172,6 +172,9 @@ Deno.serve(async (req) => {
             subject: `Votre avis sur votre expérience Paris Exchange (${order.order_id})`,
             content: "Veuillez consulter cet email avec un client compatible HTML.",
             html: emailHtml,
+            headers: {
+              "Content-Type": "text/html; charset=UTF-8"
+            }
           });
           
           // Update the database to mark the email as sent
