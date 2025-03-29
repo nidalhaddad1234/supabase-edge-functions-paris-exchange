@@ -1,5 +1,8 @@
 {
   "tasks": {
     "dev": "deno run --allow-net --allow-env --allow-read --watch index.ts"
+  },
+  "imports": {
+    "/shared/": "../shared/"
   }
 }

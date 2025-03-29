@@ -163,6 +163,28 @@ Deno.serve(async (req) => {
           // Remove the SUPABASE_URL parameter
         );
         
+        // Generate plain text version for better compatibility
+        const plainTextContent = `Votre avis nous intéresse - Paris Exchange
+
+Bonjour ${order.first_name},
+
+Nous espérons que vous êtes satisfait(e) de votre récente opération de change chez Paris Exchange.
+
+Rappel de votre commande :
+Référence : ${order.order_id}
+Opération : ${order.operation_type} - ${order.from_amount} ${order.from_currency} → ${order.to_amount} ${order.to_currency}
+
+Pouvez-vous évaluer votre expérience avec nous ? Cela ne prendra qu'une seconde :
+
+1 étoile: Déçu(e) - ${WEBSITE_URL}/feedback?rating=1&order=${order.order_id}
+2 étoiles: Moyen - ${WEBSITE_URL}/feedback?rating=2&order=${order.order_id}
+3 étoiles: Satisfait(e) - ${WEBSITE_URL}/feedback?rating=3&order=${order.order_id}
+4 étoiles: Très bien - ${WEBSITE_URL}/feedback?rating=4&order=${order.order_id}
+5 étoiles: Excellent - ${GOOGLE_REVIEW_URL}
+
+Merci de nous aider à améliorer nos services !
+`;
+        
         // In test mode, don't actually send emails
         if (!testMode) {
           // Send the email
@@ -170,10 +192,11 @@ Deno.serve(async (req) => {
             from: { name: FROM_NAME, email: FROM_EMAIL },
             to: order.email,
             subject: `Votre avis sur votre expérience Paris Exchange (${order.order_id})`,
-            content: "Veuillez consulter cet email avec un client compatible HTML.",
+            content: plainTextContent,
             html: emailHtml,
+            contentType: "multipart/alternative",
             headers: {
-              "Content-Type": "text/html; charset=UTF-8"
+              "MIME-Version": "1.0"
             }
           });
           

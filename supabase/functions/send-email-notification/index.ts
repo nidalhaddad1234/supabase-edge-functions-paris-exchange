@@ -68,6 +68,21 @@ Deno.serve(async (req) => {
       adminUrl
     );
     
+    // Generate plain text version for better compatibility
+    const plainTextContent = `Nouvelle Commande de Change: ${order_data.order_id}
+Une nouvelle commande de change de devises a été reçue avec les détails suivants :
+Numéro de commande : ${order_data.order_id}
+Nom, Prénom : ${order_data.first_name} ${order_data.last_name}
+Email : ${order_data.email || 'Non fourni'}
+Numéro de téléphone : ${order_data.phone || 'Non fourni'}
+Type d'opération : ${order_data.operation_type}
+Montant d'échange : ${order_data.from_amount} ${order_data.from_currency} → ${order_data.to_amount} ${order_data.to_currency}
+Taux appliqué : ${order_data.taux}
+Date de commande : ${parisTime}
+Remarques client : ${order_data.remarques || 'Aucune remarque'}
+Veuillez traiter cette commande dans les plus brefs délais.
+`;
+    
     // Create a new SMTP client
     const client = new SMTPClient({
       connection: {
@@ -86,10 +101,11 @@ Deno.serve(async (req) => {
       from: FROM_EMAIL,
       to: to,
       subject: subject,
-      content: "Veuillez consulter cet email avec un client compatible HTML.",
+      content: plainTextContent,
       html: htmlContent,
+      contentType: "multipart/alternative",
       headers: {
-        "Content-Type": "text/html; charset=UTF-8"
+        "MIME-Version": "1.0"
       }
     });
     

@@ -66,6 +66,24 @@ Deno.serve(async (req) => {
       WEBSITE_URL
     );
     
+    // Generate plain text version for better compatibility
+    const plainTextContent = `Commande Confirmée - Paris Exchange
+Bonjour ${order_data.first_name} ${order_data.last_name},
+Nous avons le plaisir de vous informer que votre commande de change de devises a été confirmée.
+IMPORTANT:
+Votre commande est disponible pour récupération dès maintenant et jusqu'à ${formattedExpiration} (24 heures).
+Passé ce délai, votre commande devra être réservée à nouveau.
+Détails de votre commande:
+Numéro de commande : ${order_data.order_id}
+Type d'opération : ${order_data.operation_type}
+Montant d'échange : ${order_data.from_amount} ${order_data.from_currency} → ${order_data.to_amount} ${order_data.to_currency}
+Taux appliqué : ${order_data.taux}
+Prochaine étape:
+Présentez-vous à notre agence pour récupérer votre commande.
+Des questions ? Contactez-nous
+${WEBSITE_URL}/contact
+`;
+    
     // Create a new SMTP client
     const client = new SMTPClient({
       connection: {
@@ -84,10 +102,11 @@ Deno.serve(async (req) => {
       from: FROM_EMAIL,
       to: to,
       subject: subject,
-      content: "Veuillez consulter cet email avec un client compatible HTML.",
+      content: plainTextContent,
       html: htmlContent,
+      contentType: "multipart/alternative",
       headers: {
-        "Content-Type": "text/html; charset=UTF-8"
+        "MIME-Version": "1.0"
       }
     });
     
